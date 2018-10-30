@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+
+require 'logger'
+require 'optparse'
+require 'rangefinder'
+
+loglevel = Logger::WARN
+options  = YAML.load_file(File.expand_path('~/.rangefinder.conf')) rescue {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: rangefinder <paths>
+
+Run this command with a space separated list of file paths in a module and it
+will infer what each file defines and then tell you what Forge modules use it.
+
+It will separate output by the modules that we KNOW will be impacted and those
+which we can only GUESS that will be impacted. We can tell the difference based
+on whether the impacted module has properly described dependencies in their
+`metadata.json`.
+
+"
+
+  opts.on('-r', '--render-as FORMAT', 'Render the output as human, json, or yaml') do |val|
+    val = val.downcase.to_sym
+    fail "Unknown output type (#{val})" unless [:human, :json, :yaml].include? val
+    options[:render] = val
+  end
+
+  opts.on('-v', '--verbose', 'Show verbose output') do
+    loglevel = Logger::INFO
+  end
+
+  opts.on('-d', '--debug', 'Show debugging messages') do
+    loglevel = Logger::DEBUG
+  end
+
+  opts.on('--shell', 'Open a pry shell for debugging (must have Pry installed)') do
+    options[:shell] = true
+  end
+
+  opts.on('--version', 'Show version number') do
+    puts Rangefinder::VERSION
+    exit
+  end
+
+end.parse!
+options[:filenames]   = ARGV.map {|f| File.expand_path f} unless ARGV.empty?
+options[:filenames] ||= ['manifests/init.pp']
+options[:render]    ||= :human
+
+$logger           = Logger.new($stderr)
+$logger.level     = loglevel
+$logger.formatter = proc { |severity,datetime,progname,msg| "#{severity}: #{msg}\n" }
+
+if options[:shell]
+  require 'pry'
+  binding.pry
+  exit 0
+end
+
+Rangefinder.new(options).render!
