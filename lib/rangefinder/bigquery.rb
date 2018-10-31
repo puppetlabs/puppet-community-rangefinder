@@ -17,7 +17,7 @@ class Rangefinder::Bigquery
   end
 
   def find(namespace, kind, name)
-    sql = "SELECT module, i.source, m.source AS repo
+    sql = "SELECT DISTINCT module, i.source, m.source AS repo
            FROM `bto-dataops-datalake-prod.community.forge_itemized` AS i
            JOIN `bto-dataops-datalake-prod.community.forge_modules` AS m
              ON m.slug = i.module
