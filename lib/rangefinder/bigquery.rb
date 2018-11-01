@@ -25,11 +25,13 @@ class Rangefinder::Bigquery
 
     data = @dataset.query(sql, params: {kind: kind.to_s, name: name})
 
+    exact, near = data.partition {|row| row[:source] == namespace and not namespace.nil?}
+
     {
-      :kind => kind,
-      :name => name,
-      :exact => data.select {|row| row[:source] == namespace},
-      :near  => data.reject {|row| row[:source]},
+      :kind  => kind,
+      :name  => name,
+      :exact => exact,
+      :near  => near,
     }
   end
 end
