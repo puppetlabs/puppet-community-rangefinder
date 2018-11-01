@@ -5,12 +5,17 @@ Predicts downstream impact of breaking file changes
 
 Rangefinder provides a command that can infer what a file defines and then tell
 you what Forge modules use it. In other words, if you change the interface
-provided by that file -- this will tell you what Forge modules must adapt to it.
+provided by that file -- this will tell you what Forge modules must adapt to
+that change.
+
+If the file being evaluated is part of a Puppet module, then Rangefinder will
+use that module's `metadata.json` to identify the name, and then use it to
+fine-tune the way the results are presented.
 
 It will separate output by the modules that we *know* will be impacted and those
 which we can only *guess* that will be impacted. We can tell the difference based
-on whether the impacted module has properly described dependencies in their
-`metadata.json`.
+on whether the impacted module has properly described dependencies in their own
+`metadata.json` and whether `rangefinder` can figure out a dependency match.
 
 This currently knows how to interpret and look up:
 
@@ -41,9 +46,9 @@ Contact [me](mailto:ben.ford@puppet.com) for credentials.
 
 ## Running
 
-Just run the `rangefinder` command with a list of files in a Puppet module. If
-it knows what the file is, then it will print out a list of Forge modules that
-use the thing defined by that file.
+Just run the `rangefinder` command with a list of files. If it knows what the
+file defines, then it will print out a list of Forge modules that use the thing
+defined by that file.
 
 You can also `--render-as` either `json` or `yaml`.
 
