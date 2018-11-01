@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
   s.files             = %w( README.md LICENSE CHANGELOG.md )
   s.files            += Dir.glob("lib/**/*")
   s.files            += Dir.glob("bin/**/*")
-  s.add_dependency      "puppet",                  "> 5.0"
-  s.add_dependency      "google-cloud-bigquery",   "> 1.0"
+  s.add_dependency      "puppet",                  ">= 5.0", "<7.0"
+  s.add_dependency      "google-cloud-bigquery",   "~> 1.0"
 
   s.description       = <<-desc
   Run this command with a space separated list of file paths in a module and it
