@@ -26,7 +26,17 @@ This currently knows how to interpret and look up:
 * Defined types
 * Puppet resource types
 
-   
+
+## Installation
+
+This is distributed as a Ruby gem. Simply `gem install puppet-community-rangefinder`
+
+    ******************************************************************************
+    * Note that this is only useful by members of the Puppet Ecosystem team      *
+    * because it uses BigQuery data that's not available publicly.               *
+    ******************************************************************************
+
+
 ## Configuration
 
 You must configure BigQuery credentials in the `~/.rangefinder.conf` file.
