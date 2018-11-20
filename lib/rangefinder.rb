@@ -12,9 +12,16 @@ class Rangefinder
     if options[:filenames].size == 1 and File.directory?(options[:filenames].first)
       options[:filenames] = Dir.glob("#{options[:filenames].first}/*")
     end
+
+    @maxlen = options[:filenames].map {|f| File.basename(f).length }.max
   end
 
   def render!
+    if @options[:render] == :summarize
+      printf("%-#{@maxlen}s%12s%8s%6s\n", 'Item Name', 'Kind', 'Exact', 'Near')
+      puts '=' * (@maxlen+26)
+    end
+
     @options[:filenames].each do |filename|
       case File.extname(filename).downcase
       when '.pp'
@@ -36,6 +43,8 @@ class Rangefinder
       case @options[:render]
       when :human
         puts pretty_print(results)
+      when :summarize
+        puts print_line(results)
       when :json
         puts JSON.pretty_generate(results)
       when :yaml
@@ -60,6 +69,10 @@ class Rangefinder
     pathname = File.join([File::SEPARATOR, modroot, 'metadata.json'].flatten)
     metadata = JSON.parse(File.read(pathname)) rescue {}
     metadata['name']
+  end
+
+  def print_line(results)
+    sprintf("%-#{@maxlen}s%12s%8d%6d\n", results[:name], results[:kind], results[:exact].size, results[:near].size)
   end
 
   def pretty_print(results)

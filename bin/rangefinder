@@ -16,13 +16,15 @@ will infer what each file defines and then tell you what Forge modules use it.
 It will separate output by the modules that we KNOW will be impacted and those
 which we can only GUESS that will be impacted. We can tell the difference based
 on whether the impacted module has properly described dependencies in their
-`metadata.json`.
+`metadata.json`. These are rendered as *exact match* and *near match*.
+
+Note that non-namespaced items will always be near match only.
 
 "
 
-  opts.on('-r', '--render-as FORMAT', 'Render the output as human, json, or yaml') do |val|
+  opts.on('-r', '--render-as FORMAT', 'Render the output as human, summarize, json, or yaml') do |val|
     val = val.downcase.to_sym
-    fail "Unknown output type (#{val})" unless [:human, :json, :yaml].include? val
+    fail "Unknown output type (#{val})" unless [:human, :summarize, :json, :yaml].include? val
     options[:render] = val
   end
 
