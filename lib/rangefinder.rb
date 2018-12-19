@@ -6,6 +6,8 @@ class Rangefinder
   require 'rangefinder/version'
 
   def initialize(options)
+    options[:filenames] ||= [] # don't blow up if we're called with no files
+
     @options  = options
     @bigquery = Rangefinder::Bigquery.new(options)
 
@@ -17,12 +19,32 @@ class Rangefinder
   end
 
   def render!
+    results = analyze(@options[:filenames])
+
     if @options[:render] == :summarize
       printf("%-#{@maxlen}s%12s%8s%6s\n", 'Item Name', 'Kind', 'Exact', 'Near')
       puts '=' * (@maxlen+26)
     end
 
-    @options[:filenames].each do |filename|
+    results.compact.each do |item|
+      case @options[:render]
+      when :human
+        puts pretty_print(item)
+      when :summarize
+        puts print_line(item)
+      when :json
+        puts JSON.pretty_generate(item)
+      when :yaml
+        require 'yaml'
+        puts item.to_yaml
+      else
+        raise "Invalid render type (#{@options[:render]})."
+      end
+    end
+  end
+
+  def analyze(files)
+    files.map do |filename|
       case File.extname(filename).downcase
       when '.pp'
         kind, name = Rangefinder::Parser::Puppet.new(filename).evaluate!
@@ -38,21 +60,7 @@ class Rangefinder
         next
       end
 
-      results = @bigquery.find(namespace(filename), kind, name)
-
-      case @options[:render]
-      when :human
-        puts pretty_print(results)
-      when :summarize
-        puts print_line(results)
-      when :json
-        puts JSON.pretty_generate(results)
-      when :yaml
-        require 'yaml'
-        puts results.to_yaml
-      else
-        raise "Invalid render type (#{@options[:render]})."
-      end
+      @bigquery.find(namespace(filename), kind, name)
     end
   end
 
