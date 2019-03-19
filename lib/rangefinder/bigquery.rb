@@ -25,13 +25,38 @@ class Rangefinder::Bigquery
 
     data = @dataset.query(sql, params: {kind: kind.to_s, name: name})
 
-    exact, near = data.partition {|row| row[:source] == namespace and not namespace.nil?}
+    if namespace
+      exact, near = data.partition {|row| row[:source] == namespace}
+      puppetfile  = "#{puppetfile_count(namespace)} of #{puppetfile_count}"
+    else
+      exact      = nil
+      puppetfile = nil
+      near       = data
+    end
 
     {
-      :kind  => kind,
-      :name  => name,
-      :exact => exact,
-      :near  => near,
+      :kind       => kind,
+      :name       => name,
+      :exact      => exact,
+      :near       => near,
+      :puppetfile => puppetfile,
     }
   end
+
+  def puppetfile_count(modname=nil)
+    if modname
+      sql = 'SELECT COUNT(DISTINCT repo_name) AS count
+             FROM `bto-dataops-datalake-prod.community.github_puppetfile_usage`
+             WHERE module = @name'
+
+      data = @dataset.query(sql, params: {name: modname})
+    else
+      sql = 'SELECT COUNT(DISTINCT repo_name) AS count
+             FROM `bto-dataops-datalake-prod.community.github_puppetfile_usage`'
+
+      data = @dataset.query(sql)
+    end
+    data.first[:count]
+  end
+
 end
