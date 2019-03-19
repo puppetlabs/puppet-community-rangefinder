@@ -1,3 +1,7 @@
+# v0.0.4
+
+* Render stats for Puppetfile dependencies
+
 # v0.0.3
 
 * Added summary view for a list of files
