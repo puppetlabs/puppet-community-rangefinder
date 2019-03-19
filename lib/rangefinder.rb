@@ -14,19 +14,18 @@ class Rangefinder
     if options[:filenames].size == 1 and File.directory?(options[:filenames].first)
       options[:filenames] = Dir.glob("#{options[:filenames].first}/*")
     end
-
-    @maxlen = options[:filenames].map {|f| File.basename(f).length }.max
   end
 
   def render!
-    results = analyze(@options[:filenames])
+    results = analyze(@options[:filenames]).compact
+    @maxlen = (results.map {|res| res[:name].length} + [12]).max # Take into account the 'item name' label
 
     if @options[:render] == :summarize
-      printf("%-#{@maxlen}s%12s%8s%6s\n", 'Item Name', 'Kind', 'Exact', 'Near')
-      puts '=' * (@maxlen+26)
+      printf("%-#{@maxlen}s %-12s %-8s %-7s %-12s\n", 'Item Name', 'Kind', 'Exact', 'Near', 'Puppetfiles')
+      puts '=' * (@maxlen+42)
     end
 
-    results.compact.each do |item|
+    results.each do |item|
       case @options[:render]
       when :human
         puts pretty_print(item)
@@ -80,7 +79,12 @@ class Rangefinder
   end
 
   def print_line(results)
-    sprintf("%-#{@maxlen}s%12s%8d%6d\n", results[:name], results[:kind], results[:exact].size, results[:near].size)
+    sprintf("%-#{@maxlen}s %-12s %-8s %-7s %-12s\n",
+            results[:name],
+            results[:kind],
+            results[:exact].size,
+            results[:near].size,
+            results[:puppetfile])
   end
 
   def pretty_print(results)
@@ -89,6 +93,10 @@ class Rangefinder
 
     if results[:exact].empty? and results[:near].empty?
       output << "with no external impact.\n\n"
+    end
+
+    unless results[:puppetfile].empty?
+      output << "The enclosing module is declared in #{results[:puppetfile]} indexed public Puppetfiles\n\n"
     end
 
     unless results[:exact].empty?
