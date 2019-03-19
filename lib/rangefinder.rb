@@ -12,7 +12,7 @@ class Rangefinder
     @bigquery = Rangefinder::Bigquery.new(options)
 
     if options[:filenames].size == 1 and File.directory?(options[:filenames].first)
-      options[:filenames] = Dir.glob("#{options[:filenames].first}/*")
+      options[:filenames] = Dir.glob("#{options[:filenames].first}/**/*")
     end
   end
 
