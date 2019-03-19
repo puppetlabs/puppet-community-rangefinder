@@ -47,7 +47,7 @@ Note that non-namespaced items will always be near match only.
 
 end.parse!
 options[:filenames]   = ARGV.map {|f| File.expand_path f} unless ARGV.empty?
-options[:filenames] ||= ['manifests/init.pp']
+options[:filenames] ||= ['manifests']
 options[:render]    ||= :human
 
 $logger           = Logger.new($stderr)
