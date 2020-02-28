@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
   s.files             = %w( README.md LICENSE CHANGELOG.md )
   s.files            += Dir.glob("lib/**/*")
   s.files            += Dir.glob("bin/**/*")
+  s.files            += Dir.glob("assets/**/*")
   s.add_dependency      "puppet",                  ">= 5.0", "<7.0"
   s.add_dependency      "google-cloud-bigquery",   "~> 1.0"
 

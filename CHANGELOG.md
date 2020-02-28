@@ -1,3 +1,4 @@
+# v0.0.6
 # v0.0.5
 
 * Ported to use the public dataset by default now.
