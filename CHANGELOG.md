@@ -1,6 +1,12 @@
+# v0.0.5
+
+* Ported to use the public dataset by default now.
+
+
 # v0.0.4
 
 * Render stats for Puppetfile dependencies
+
 
 # v0.0.3
 
