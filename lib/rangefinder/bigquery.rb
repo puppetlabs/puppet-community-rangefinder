@@ -7,7 +7,6 @@ class Rangefinder::Bigquery
 
     raise "Required gCloud configuration missing" unless gcloud
 
-    gcloud[:keyfile] = File.expand_path(gcloud[:keyfile])
     @bigquery = Google::Cloud::Bigquery.new(
       :project_id  => gcloud[:project],
       :credentials => Google::Cloud::Bigquery::Credentials.new(gcloud[:keyfile]),
@@ -18,8 +17,8 @@ class Rangefinder::Bigquery
 
   def find(namespace, kind, name)
     sql = "SELECT DISTINCT module, i.source, m.source AS repo
-           FROM `bto-dataops-datalake-prod.community.forge_itemized` AS i
-           JOIN `bto-dataops-datalake-prod.community.forge_modules` AS m
+           FROM `#{@dataset.project_id}.#{@dataset.dataset_id}.forge_itemized` AS i
+           JOIN `#{@dataset.project_id}.#{@dataset.dataset_id}.forge_modules` AS m
              ON m.slug = i.module
            WHERE kind = @kind AND element = @name"
 
@@ -45,14 +44,14 @@ class Rangefinder::Bigquery
 
   def puppetfile_count(modname=nil)
     if modname
-      sql = 'SELECT COUNT(DISTINCT repo_name) AS count
-             FROM `bto-dataops-datalake-prod.community.github_puppetfile_usage`
-             WHERE module = @name'
+      sql = "SELECT COUNT(DISTINCT repo_name) AS count
+             FROM `#{@dataset.project_id}.#{@dataset.dataset_id}.github_puppetfile_usage`
+             WHERE module = @name"
 
       data = @dataset.query(sql, params: {name: modname})
     else
-      sql = 'SELECT COUNT(DISTINCT repo_name) AS count
-             FROM `bto-dataops-datalake-prod.community.github_puppetfile_usage`'
+      sql = "SELECT COUNT(DISTINCT repo_name) AS count
+             FROM `#{@dataset.project_id}.#{@dataset.dataset_id}.github_puppetfile_usage`"
 
       data = @dataset.query(sql)
     end

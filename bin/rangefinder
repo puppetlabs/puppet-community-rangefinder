@@ -6,7 +6,17 @@ require 'optparse'
 require 'rangefinder'
 
 loglevel = Logger::WARN
-options  = YAML.load_file(File.expand_path('~/.rangefinder.conf')) rescue {}
+options = {
+  :gcloud => {
+    :noinit  => true,
+    :dataset => 'community',
+    :project => 'dataops-puppet-public-data',
+    :keyfile => File.join(File.dirname(__FILE__), '..', 'assets', 'read-only-credentials.json')
+  }
+}
+overrides = YAML.load_file(File.expand_path('~/.rangefinder.conf')) rescue {}
+options.merge!(overrides)
+
 OptionParser.new do |opts|
   opts.banner = "Usage: rangefinder <paths>
 
@@ -46,6 +56,7 @@ Note that non-namespaced items will always be near match only.
   end
 
 end.parse!
+options[:gcloud][:keyfile] = File.expand_path(options[:gcloud][:keyfile])
 options[:filenames]   = ARGV.map {|f| File.expand_path f} unless ARGV.empty?
 options[:filenames] ||= ['manifests']
 options[:render]    ||= :human
