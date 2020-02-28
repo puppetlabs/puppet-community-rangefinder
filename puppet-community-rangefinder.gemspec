@@ -22,11 +22,6 @@ Gem::Specification.new do |s|
   Run this command with a space separated list of file paths in a module and it
   will infer what each file defines and then tell you what Forge modules use it.
 
-  ******************************************************************************
-  * Note that this is only useful by members of the Puppet Ecosystem team      *
-  * because it uses BigQuery data that's not available publicly.               *
-  ******************************************************************************
-
   Run `rangefinder --help` to get started.
   desc
 

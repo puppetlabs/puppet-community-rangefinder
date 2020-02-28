@@ -31,28 +31,6 @@ This currently knows how to interpret and look up:
 
 This is distributed as a Ruby gem. Simply `gem install puppet-community-rangefinder`
 
-    ******************************************************************************
-    * Note that this is only useful by members of the Puppet Ecosystem team      *
-    * because it uses BigQuery data that's not available publicly.               *
-    ******************************************************************************
-
-
-## Configuration
-
-You must configure BigQuery credentials in the `~/.rangefinder.conf` file.
-
-Example configuration:
-
-```
----
-:gcloud:
-  :dataset: <dataset>
-  :project: <project>
-  :keyfile: ~/.rangefinder/credentials.json
-```
-
-Contact [me](mailto:ben.ford@puppet.com) for credentials.
-
 
 ## Running
 
@@ -397,13 +375,34 @@ Breaking changes to this file MAY impact these modules:
 ```
 
 
+## Configuration
+
+Rangefinder will use the public dataset by default. If you're developing on the
+data pipeline, you may configure BigQuery credentials in the `~/.rangefinder.conf`
+file to point at private datasets instead.
+
+Example configuration:
+
+```
+---
+:gcloud:
+  :dataset: <dataset>
+  :project: <project>
+  :keyfile: ~/.rangefinder/credentials.json
+```
+
+Contact [me](mailto:ben.ford@puppet.com) for credentials.
+
+
 ## Limitations
 
 This is super early in development and has not yet been battle tested.
 
+
 ## Disclaimer
 
 I take no liability for the use of this tool.
+
 
 Contact
 -------
