@@ -1,5 +1,7 @@
 # Rangefinder
-Predicts downstream impact of breaking file changes
+Predicts downstream impact of breaking file changes, or run via a
+[GitHub App](https://github.com/apps/puppet-community-rangefinder)
+to run analysis on pull requests.
 
 ## Overview
 
